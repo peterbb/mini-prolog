@@ -7,24 +7,24 @@ was written over the course of a few hours.
 ## Syntax
 ### Terms
 A term is either a variable or a function application. A variable is
-written with an initial capital letter, e.g. "X", "Rest".
+written with an initial capital letter, e.g. `X`, `Rest`.
 A function name is written with an initial lower case letter,
-e.g. "f", "cons". A function application is a function name followed
+e.g. `f`, `cons`. A function application is a function name followed
 by a comma-separated list of terms which are enclosed with parenthesis,
-e.g. "cons(Head, Tail)", "zero()".
+e.g. `cons(Head, Tail)`, `zero()`.
 
 Writing just a function name without the argument list
 is shorthand for an application with the empty argument list,
-e.g. "zero" is short for "zero()". The grammar for terms is:
+e.g. `zero` is short for `zero()`. The grammar for terms is:
 
     <term> ::= <var> | <fun-name> <args>?
     <args> ::=  "("  ( <term> ( ", " <term> )* )?   ")"
 
 ### Formulas
 A relation name is an identifiers which an initial lower case letter,
-e.g. "append" and "add".
+e.g. `append` and `add`.
 An atomic formula is a relation name followed by a comma-separated
-list of terms, enclosed in parenthesis, e.g. "append(nil, X, X)".
+list of terms, enclosed in parenthesis, e.g. `append(nil, X, X)`.
 A query or a body is a comma-separated list of atomic formulas.
 
     <atom> ::= <rel-name> <args>
@@ -37,14 +37,14 @@ A program is a sequence of commands.
 A command is always terminated by a full stop/period.
 There are currently four commands: facts, rules, queries, and unification.
 
-   <program> ::= ( <command> "." )*
-   <command> ::= <fact> | <rule> | <query> | <unification>
+    <program> ::= ( <command> "." )*
+    <command> ::= <fact> | <rule> | <query> | <unification>
 
 #### Facts and rules
-An atomic formula and a body separated by ":-" is a rule.
+An atomic formula and a body separated by `:-` is a rule.
 A fact is an atomic formula, and it is a short hand syntax
-for a clause with an empty body, e.g. "add(z, X, X)" is 
-short hand for "add(z, X, X) :-.". The syntax of facts and rules is:
+for a clause with an empty body, e.g. `add(z, X, X)` is 
+short hand for `add(z, X, X) :-.`. The syntax of facts and rules is:
 
     <fact> ::= <atom>
     <rule> ::= <atom> ":-" <body>
@@ -74,6 +74,6 @@ The goal is solved from left to right, new goals are added to the left,
 and clauses for resolution is search from the latest to the oldest.
 
 When encountering a unification problem, the two terms are tried
-unified. If they are unified, "yes" is printed, followed by the unifing
-substitution. Otherwise "no" is printed.
+unified. If they are unified, `yes` is printed, followed by the unifing
+substitution. Otherwise `no` is printed.
 
