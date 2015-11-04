@@ -13,55 +13,51 @@ let init_position filename = {
         pos_cnum = 0
 }
 
-let rec run_file2 program lexbuf = 
-    match Parser.command_option Lexer.read lexbuf with
+let parse_command lexbuf = 
+    try Parser.command_option Lexer.read lexbuf with
+    | e -> report_position lexbuf.Lexing.lex_curr_p; raise e
+
+let report_result = function
+    | None ->
+        printf "no.\n"
+    | Some sigma ->
+        printf "yes.\n";
+        Unifier.print sigma
+
+let rec parse_and_execute program lexbuf = 
+    match parse_command lexbuf with
     | None -> program
     | Some (Command.Clause clause) ->
-        run_file2 (Program.add clause program) lexbuf
+        parse_and_execute (Program.add clause program) lexbuf
     | Some (Command.Query goal) ->
-        begin match Execute.execute program goal with
-        | None ->
-            printf "no\n"
-        | Some sigma ->
-            printf "yes\n";
-            Unifier.print sigma
-        end;
-        run_file2 program lexbuf
+        Execute.execute program goal |> report_result;
+        parse_and_execute program lexbuf
     | Some (Command.Unify (t0, t1)) ->
-        begin match Term.unify t0 t1 with
-        | None ->
-            printf "no\n"
-        | Some sigma ->
-            printf "yes:\n";
-            Unifier.print sigma
-        end;
-        run_file2 program lexbuf
+        Term.unify t0 t1 |> report_result;
+        parse_and_execute program lexbuf
 
-let run_file program filename =
+let load_file program filename =
     let in_channel = open_in filename in
-    let lexbuf = from_channel in_channel in
-    lexbuf.lex_curr_p <- init_position filename;
     try
-        let program = run_file2 program lexbuf in
+        let lexbuf = from_channel in_channel in
+        lexbuf.lex_curr_p <- init_position filename;
+        let program = parse_and_execute program lexbuf in
         close_in in_channel;
         program
     with
-    | e ->
-        close_in in_channel;
-        report_position lexbuf.Lexing.lex_curr_p;
-        raise e
+    | e -> close_in in_channel; raise e
     
 
-let rec run_files program = function
+let rec load_files program = function
     | [] ->
         ()
     | filename :: filenames ->
-        let program = run_file program filename in
-        run_files program filenames
+        let program = load_file program filename in
+        load_files program filenames
 
 let main = function
     | _ :: filenames ->
-        run_files Syntax.Program.empty filenames 
+        load_files Syntax.Program.empty filenames 
     | [] ->
         ()
 
