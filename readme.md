@@ -1,6 +1,6 @@
 # Mini prolog
 
-This is an implementation of a of logical programming language with
+This is an implementation of a logical programming language with
 horn clauses. It is implemented in ~350 lines of ocaml code, and
 was written over the course of a few hours.
 
